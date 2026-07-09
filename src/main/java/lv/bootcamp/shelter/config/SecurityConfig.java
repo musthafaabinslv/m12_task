@@ -66,6 +66,7 @@ import org.springframework.security.web.SecurityFilterChain;
  *       the "Authorize" button sends {@code Authorization: Bearer <token>}.</li>
  * </ol>
  */
+
 @Configuration
 public class SecurityConfig {
 
@@ -76,6 +77,7 @@ public class SecurityConfig {
 
     @Bean
     public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
+
         UserDetails user = User.builder()
                 .username("user")
                 .password(passwordEncoder.encode("user123"))
@@ -93,28 +95,69 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
-                // The JSON API is exercised directly with HTTP Basic (curl/Postman/Swagger),
-                // which never carries an ambient browser session cookie, so CSRF tokens
-                // aren't needed there. Browser-facing pages/forms keep CSRF protection.
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/**")
+                )
+
                 .authorizeHttpRequests(auth -> auth
+
+                        // Public pages
+                        .requestMatchers(
+                                "/",
+                                "/animals",
+                                "/animals/**",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**",
+                                "/favicon.ico"
+                        ).permitAll()
+
+                        // Swagger UI
+                        .requestMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
+                        ).permitAll()
+
+                        // REST API permissions
                         .requestMatchers(HttpMethod.GET,
-                                "/", "/*.html", "/css/**", "/js/**", "/images/**", "/favicon.ico")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/animals/adopted").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/animals/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/animals/new").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/animals", "/animals/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/animals/*/adopt").hasRole("USER")
-                        .requestMatchers(HttpMethod.POST, "/api/animals").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/animals").hasRole("ADMIN")
+                                "/api/animals",
+                                "/api/animals/**"
+                        ).permitAll()
+
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/animals/adopted"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/animals"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/animals/*/adopt"
+                        ).hasRole("USER")
+
+                        // Thymeleaf pages
+                        .requestMatchers(HttpMethod.GET,
+                                "/animals/new"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST,
+                                "/animals"
+                        ).hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
+
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .logout(Customizer.withDefaults());
 
         return http.build();
     }
+
 }
+
+
