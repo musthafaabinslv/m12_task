@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║  TASK A — STEP 5: ADD-ANIMAL FORM PAGE                           ║
+  ╠══════════════════════════════════════════════════════════════════╣
+  ║  This is a plain static draft — the form does not submit yet.    ║
+  ║                                                                  ║
+  ║  Your job:                                                       ║
+  ║  1. Move this file to:                                           ║
+  ║       src/main/resources/templates/animals-new.html              ║
+  ║  2. Add xmlns:th="http://www.thymeleaf.org" to <html>            ║
+  ║  3. In AnimalPageController add:                                 ║
+  ║       @GetMapping("/animals/new")                                ║
+  ║       public String newAnimalForm(Model model) {                 ║
+  ║           model.addAttribute("form",                             ║
+  ║               new AnimalForm(null,null,null,null,null,null));    ║
+  ║           return "animals-new";                                  ║
+  ║       }                                                          ║
+  ║  4. Replace <form action=...> with th:action="@{/animals}"       ║
+  ║     and add th:object="${form}" to <form>                        ║
+  ║  5. Replace each name="..." with th:field="*{fieldName}"         ║
+  ║     (you can remove name= and id= — th:field sets them)          ║
+  ║  6. Add POST /animals → create + redirect                        ║
+  ║                                                                  ║
+  ║  ADMIN-only page (see SecurityConfig):                           ║
+  ║  7. GET /animals/new and POST /animals are already restricted    ║
+  ║     to ROLE_ADMIN on the backend. Also guard this page:          ║
+  ║       @GetMapping("/animals/new") should redirect (or 403) non-  ║
+  ║       admins instead of just relying on the security filter.     ║
+  ║  8. Only link to this page ("Add animal" in the nav) when        ║
+  ║     isAdmin is true.                                             ║
+  ╚══════════════════════════════════════════════════════════════════╝
+-->
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>Add Animal</title>
+
+  <style>
+
+    body{
+      font-family:sans-serif;
+      max-width:700px;
+      margin:2rem auto;
+      padding:1rem;
+    }
+
+    nav{
+      background:#f1f5f9;
+      padding:10px;
+      border-radius:6px;
+      margin-bottom:20px;
+    }
+
+    nav a{
+      margin-right:20px;
+      text-decoration:none;
+      color:#2563eb;
+    }
+
+    nav a:hover{
+      text-decoration:underline;
+    }
+
+    form{
+      display:grid;
+      gap:12px;
+    }
+
+    input,
+    textarea,
+    select{
+      padding:8px;
+      width:100%;
+      box-sizing:border-box;
+    }
+
+    button{
+      width:150px;
+      padding:10px;
+      background:royalblue;
+      color:white;
+      border:none;
+      border-radius:5px;
+      cursor:pointer;
+    }
+
+    button:hover{
+      background:#1d4ed8;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<nav>
+
+  <a th:href="@{/}">
+    Home
+  </a>
+
+  <a th:href="@{/animals}">
+    All animals
+  </a>
+
+  <a th:if="${isAdmin}"
+     th:href="@{/animals/new}">
+    Add animal
+  </a>
+
+</nav>
+
+<h1>Add New Animal</h1>
+
+<form
+        th:action="@{/animals}"
+        th:object="${form}"
+        method="post">
+
+  <label>Name</label>
+
+  <input
+          type="text"
+          th:field="*{name}">
+
+  <label>Type</label>
+
+  <select th:field="*{type}">
+
+    <option value="">Select Type</option>
+
+    <option
+            th:each="type : ${types}"
+            th:value="${type}"
+            th:text="${type}">
+    </option>
+
+  </select>
+
+  <label>Breed</label>
+
+  <input
+          type="text"
+          th:field="*{breed}">
+
+  <label>Age</label>
+
+  <input
+          type="number"
+          th:field="*{age}">
+
+  <label>Description</label>
+
+  <textarea
+          rows="4"
+          th:field="*{description}">
+    </textarea>
+
+  <label>Image</label>
+
+  <input
+          type="text"
+          th:field="*{imageUrl}">
+
+  <button type="submit">
+
+    Add Animal
+
+  </button>
+
+</form>
+
+<p>
+
+  <a th:href="@{/animals}">
+
+    ← Back to Animals
+
+  </a>
+
+</p>
+
+</body>
+</html>
