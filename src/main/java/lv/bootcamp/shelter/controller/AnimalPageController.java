@@ -23,8 +23,7 @@ public class AnimalPageController {
     }
 
     @GetMapping("/animals")
-    public String animals(Model model,
-                          Authentication authentication) {
+    public String animals(Model model, Authentication authentication) {
 
         model.addAttribute("animals", animalService.findAll());
 
@@ -48,22 +47,26 @@ public class AnimalPageController {
     }
 
     @GetMapping("/animals/new")
-    public String newAnimal(Model model,
-                            Authentication authentication) {
+    public String newAnimal(Model model, Authentication authentication) {
 
-        boolean isAdmin = authentication.getAuthorities()
-                .stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        boolean isAdmin = false;
+
+        if (authentication != null) {
+            isAdmin = authentication.getAuthorities()
+                    .stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        }
 
         if (!isAdmin) {
             return "redirect:/";
         }
 
-        model.addAttribute("form",
-                new AnimalForm(null, null, null, null, null, null));
+        model.addAttribute(
+                "form",
+                new AnimalForm(null, null, null, null, null, null)
+        );
 
         model.addAttribute("types", AnimalType.values());
-
         model.addAttribute("isAdmin", true);
 
         return "animals-new";
@@ -76,4 +79,5 @@ public class AnimalPageController {
 
         return "redirect:/animals";
     }
+
 }

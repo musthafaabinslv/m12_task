@@ -31,6 +31,7 @@
   ║     isAdmin is true.                                             ║
   ╚══════════════════════════════════════════════════════════════════╝
 -->
+<!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
 
@@ -43,54 +44,63 @@
   <style>
 
     body{
-      font-family:sans-serif;
-      max-width:700px;
-      margin:2rem auto;
-      padding:1rem;
+      font-family:Arial, Helvetica, sans-serif;
+      margin:40px;
+      background:#f5f5f5;
     }
 
     nav{
-      background:#f1f5f9;
-      padding:10px;
-      border-radius:6px;
-      margin-bottom:20px;
+      margin-bottom:25px;
     }
 
     nav a{
-      margin-right:20px;
+      margin-right:18px;
       text-decoration:none;
-      color:#2563eb;
-    }
-
-    nav a:hover{
-      text-decoration:underline;
+      color:#1565c0;
+      font-weight:bold;
     }
 
     form{
-      display:grid;
-      gap:12px;
+      background:white;
+      padding:30px;
+      border-radius:8px;
+      max-width:600px;
+      box-shadow:0 0 8px rgba(0,0,0,.1);
+    }
+
+    label{
+      display:block;
+      margin-top:18px;
+      font-weight:bold;
     }
 
     input,
-    textarea,
-    select{
-      padding:8px;
+    select,
+    textarea{
+
       width:100%;
+      padding:10px;
+      margin-top:6px;
       box-sizing:border-box;
     }
 
+    textarea{
+      height:120px;
+    }
+
     button{
-      width:150px;
-      padding:10px;
-      background:royalblue;
+
+      margin-top:25px;
+      padding:12px 24px;
+      background:#1976d2;
       color:white;
       border:none;
-      border-radius:5px;
       cursor:pointer;
+      border-radius:5px;
     }
 
     button:hover{
-      background:#1d4ed8;
+      background:#0d47a1;
     }
 
   </style>
@@ -101,17 +111,14 @@
 
 <nav>
 
-  <a th:href="@{/}">
-    Home
-  </a>
+  <a th:href="@{/}">Home</a>
 
   <a th:href="@{/animals}">
-    All animals
+    All Animals
   </a>
 
-  <a th:if="${isAdmin}"
-     th:href="@{/animals/new}">
-    Add animal
+  <a th:href="@{/animals/new}">
+    Add Animal
   </a>
 
 </nav>
@@ -123,17 +130,28 @@
         th:object="${form}"
         method="post">
 
-  <label>Name</label>
+  <label for="name">
+    Animal Name
+  </label>
 
   <input
+          id="name"
           type="text"
-          th:field="*{name}">
+          th:field="*{name}"
+          required>
 
-  <label>Type</label>
+  <label for="type">
+    Animal Type
+  </label>
 
-  <select th:field="*{type}">
+  <select
+          id="type"
+          th:field="*{type}"
+          required>
 
-    <option value="">Select Type</option>
+    <option value="">
+      Select type
+    </option>
 
     <option
             th:each="type : ${types}"
@@ -143,48 +161,53 @@
 
   </select>
 
-  <label>Breed</label>
+  <label for="breed">
+    Breed
+  </label>
 
   <input
+          id="breed"
           type="text"
           th:field="*{breed}">
 
-  <label>Age</label>
+  <label for="age">
+    Age
+  </label>
 
   <input
+          id="age"
           type="number"
+          min="0"
           th:field="*{age}">
 
-  <label>Description</label>
+  <label for="description">
+    Description
+  </label>
 
   <textarea
-          rows="4"
+          id="description"
           th:field="*{description}">
     </textarea>
 
-  <label>Image</label>
+  <label for="imageUrl">
+    Image URL / Image File Name
+  </label>
 
   <input
+          id="imageUrl"
           type="text"
           th:field="*{imageUrl}">
 
   <button type="submit">
-
     Add Animal
-
   </button>
+
+  <a th:href="@{/animals}">
+    Back to List
+  </a>
 
 </form>
 
-<p>
-
-  <a th:href="@{/animals}">
-
-    ← Back to Animals
-
-  </a>
-
-</p>
-
 </body>
+
 </html>
